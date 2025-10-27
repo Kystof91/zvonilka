@@ -49,6 +49,7 @@ export default function Home() {
     <CallInterface
       userName={userName}
       myPeerId={myPeerId}
+      userId={userId}
       startCall={startCall}
       incomingCall={incomingCall}
       answerCall={answerCall}

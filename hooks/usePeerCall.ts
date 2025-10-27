@@ -34,6 +34,8 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
+    if (!userId) return
+    
     console.log('Initializing Peer with userId:', userId)
     
     const peer = new Peer(userId, {
@@ -85,8 +87,11 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
     peerRef.current = peer
 
     return () => {
+      console.log('Cleaning up Peer connection')
+      if (peerRef.current) {
+        peerRef.current.destroy()
+      }
       cleanup()
-      peer.destroy()
     }
   }, [userId])
 
@@ -190,6 +195,11 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
     if (localStream) {
       localStream.getTracks().forEach(track => track.stop())
       setLocalStream(null)
+    }
+
+    if (audioRef.current) {
+      audioRef.current.srcObject = null
+      audioRef.current = null
     }
 
     setRemoteStream(null)
