@@ -39,7 +39,11 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
     console.log('Initializing Peer with userId:', userId)
     
     const peer = new Peer(userId, {
-      debug: 2,
+      host: '0.peerjs.com',
+      port: 443,
+      path: '/',
+      secure: true,
+      debug: 3,
     })
 
     peer.on('open', (id) => {
@@ -49,15 +53,18 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
 
     peer.on('call', (call) => {
       console.log('Incoming call from:', call.peer)
+      console.log('Incoming call metadata:', call.metadata)
       
       // Ask for permission to use microphone
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
+          console.log('Local stream obtained, answering call')
           setLocalStream(stream)
           call.answer(stream)
           
           // Store the incoming call
-          setIncomingCall({ from: call.peer, fromName: call.peer })
+          const fromName = (call.metadata && call.metadata.userName) || call.peer
+          setIncomingCall({ from: call.peer, fromName })
           setCurrentTarget(call.peer)
           setCallState('ringing')
           
@@ -73,6 +80,10 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
             setCallState('ended')
           })
           
+          call.on('error', (err) => {
+            console.error('Call error:', err)
+          })
+          
           callRef.current = call
         })
         .catch((error) => {
@@ -82,6 +93,14 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
 
     peer.on('error', (error) => {
       console.error('Peer error:', error)
+    })
+
+    peer.on('disconnected', () => {
+      console.log('Peer disconnected')
+    })
+
+    peer.on('close', () => {
+      console.log('Peer connection closed')
     })
 
     peerRef.current = peer
@@ -125,9 +144,14 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      console.log('Local stream obtained for calling')
       setLocalStream(stream)
       
-      const call = peerRef.current.call(targetId, stream)
+      const call = peerRef.current.call(targetId, stream, {
+        metadata: { userName }
+      })
+      
+      console.log('Call initiated, waiting for connection')
       callRef.current = call
       
       call.on('stream', (remoteStream) => {
@@ -144,6 +168,7 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
       
       call.on('error', (error) => {
         console.error('Call error:', error)
+        cleanup()
       })
       
       setCurrentTarget(targetId)
@@ -151,7 +176,7 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
     } catch (error) {
       console.error('Error starting call:', error)
     }
-  }, [])
+  }, [userName])
 
   const answerCall = useCallback(() => {
     console.log('Answering incoming call')
