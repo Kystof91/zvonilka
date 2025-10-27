@@ -13,8 +13,12 @@ export default function Home() {
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId')
-    if (storedUserId) {
+    // Check if stored ID is 4 digits, if not - create new one
+    if (storedUserId && /^\d{4}$/.test(storedUserId)) {
       setUserId(storedUserId)
+    } else if (storedUserId) {
+      // Old long ID detected, clear it
+      localStorage.removeItem('userId')
     }
   }, [])
 
