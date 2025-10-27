@@ -38,7 +38,10 @@ export function usePeerCall(userId: string, userName: string): PeerCallHook {
     
     console.log('Initializing Peer with userId:', userId)
     
-    const peer = new Peer(userId, {
+    // Generate a longer unique ID for PeerJS
+    const peerId = `user-${userId}-${Date.now()}`
+    
+    const peer = new Peer(peerId, {
       host: '0.peerjs.com',
       port: 443,
       path: '/',

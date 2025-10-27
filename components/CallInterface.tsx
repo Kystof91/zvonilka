@@ -48,8 +48,13 @@ export default function CallInterface({
             <h1 className="text-2xl font-bold">{userName}</h1>
             <p className="text-blue-100 text-sm mt-1">Готов к звонку</p>
             <div className="mt-3 p-2 bg-blue-800 rounded text-xs">
-              <strong>Ваш ID:</strong> {myPeerId || userId}
+              <strong>Ваш ID:</strong> {myPeerId || 'Подключение...'}
             </div>
+            {!myPeerId && (
+              <p className="text-blue-200 text-xs mt-2">
+                Ожидание подключения к серверу
+              </p>
+            )}
           </div>
 
           {/* Main Content */}
