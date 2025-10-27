@@ -5,6 +5,7 @@ import { Phone, PhoneIncoming, PhoneOff, Mic, MicOff } from 'lucide-react'
 
 interface CallInterfaceProps {
   userName: string
+  myPeerId: string | null
   startCall: (targetId: string) => void
   incomingCall: { from: string; fromName: string } | null
   answerCall: () => void
@@ -17,6 +18,7 @@ interface CallInterfaceProps {
 
 export default function CallInterface({
   userName,
+  myPeerId,
   startCall,
   incomingCall,
   answerCall,
@@ -43,6 +45,11 @@ export default function CallInterface({
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
             <h1 className="text-2xl font-bold">{userName}</h1>
             <p className="text-blue-100 text-sm mt-1">Готов к звонку</p>
+            {myPeerId && (
+              <div className="mt-3 p-2 bg-blue-800 rounded text-xs">
+                <strong>Ваш ID:</strong> {myPeerId}
+              </div>
+            )}
           </div>
 
           {/* Main Content */}

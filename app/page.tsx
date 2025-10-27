@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import UserInput from '@/components/UserInput'
 import CallInterface from '@/components/CallInterface'
-import { useCall } from '@/hooks/useCall'
+import { usePeerCall } from '@/hooks/usePeerCall'
 import { generateUserId } from '@/lib/utils'
 
 export default function Home() {
@@ -37,8 +37,9 @@ export default function Home() {
     rejectCall,
     endCall,
     toggleMute,
-    incomingCall
-  } = useCall(isInitialized ? userId : '', isInitialized ? userName : '')
+    incomingCall,
+    myPeerId
+  } = usePeerCall(isInitialized ? userId : '', isInitialized ? userName : '')
 
   if (!isInitialized || !userName || !userId) {
     return <UserInput onNameSubmit={handleNameSubmit} />
@@ -47,6 +48,7 @@ export default function Home() {
   return (
     <CallInterface
       userName={userName}
+      myPeerId={myPeerId}
       startCall={startCall}
       incomingCall={incomingCall}
       answerCall={answerCall}

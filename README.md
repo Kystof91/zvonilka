@@ -17,7 +17,7 @@
 - **Next.js 14** - React фреймворк
 - **TypeScript** - Типизированный JavaScript
 - **Tailwind CSS** - Стилизация
-- **Socket.io** - WebRTC сигнализация
+- **PeerJS** - WebRTC signaling (без необходимости отдельного сервера)
 - **WebRTC** - Peer-to-peer соединение
 - **Lucide React** - Иконки
 
